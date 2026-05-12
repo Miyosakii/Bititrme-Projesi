@@ -1,0 +1,5 @@
+C:\Users\Muhammet Ali\Unity\BitirmeProjesi\BenchmarkSuite1\obj\Release\net9.0\BenchmarkSuite1.csproj.AssemblyReference.cache
+C:\Users\Muhammet Ali\Unity\BitirmeProjesi\BenchmarkSuite1\obj\Release\net9.0\BenchmarkSuite1.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Muhammet Ali\Unity\BitirmeProjesi\BenchmarkSuite1\obj\Release\net9.0\BenchmarkSuite1.AssemblyInfoInputs.cache
+C:\Users\Muhammet Ali\Unity\BitirmeProjesi\BenchmarkSuite1\obj\Release\net9.0\BenchmarkSuite1.AssemblyInfo.cs
+C:\Users\Muhammet Ali\Unity\BitirmeProjesi\BenchmarkSuite1\obj\Release\net9.0\BenchmarkSuite1.csproj.CoreCompileInputs.cache

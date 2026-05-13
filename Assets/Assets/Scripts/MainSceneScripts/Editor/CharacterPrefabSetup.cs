@@ -60,9 +60,6 @@ public class CharacterPrefabSetup : EditorWindow
         if (prefab.GetComponent<CharacterState>() == null)
             prefab.AddComponent<CharacterState>();
 
-        if (prefab.GetComponent<CharacterAttribute>() == null)
-            prefab.AddComponent<CharacterAttribute>();
-
         if (prefab.GetComponent<AnimationController>() == null)
             prefab.AddComponent<AnimationController>();
 

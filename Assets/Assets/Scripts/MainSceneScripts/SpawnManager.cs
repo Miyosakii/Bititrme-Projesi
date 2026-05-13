@@ -76,9 +76,6 @@ public class SpawnManager : MonoBehaviour
 
             unit.owner = this;
             unit.spawnTime = Time.time;
-            unit.health = unit.maxHealth;  // ⭐ Canı başlangıçta dolu yap
-            unit.attackDamage = 10f;  // ⭐ Hasar değerini ayarla
-            unit.attackRange = 2f;  // ⭐ Saldırı alanını ayarla
 
             if (!allUnits.Contains(unit))
                 allUnits.Add(unit);
@@ -165,9 +162,9 @@ public class SpawnManager : MonoBehaviour
 
             // ⭐ MEVCUT HEDEF KONTROLÜ
             Unit nearest = unit.GetCurrentTarget();
-            
+
             // Hedef ölmüşse veya geçersizse yenisini bul
-            if (nearest == null || !nearest.gameObject.activeInHierarchy || nearest.health <= 0)
+            if (nearest == null || !nearest.gameObject.activeInHierarchy || !nearest.IsAlive())
             {
                 nearest = FindNearestEnemy(unit);
                 
@@ -184,6 +181,7 @@ public class SpawnManager : MonoBehaviour
             {
                 // ⭐ Düşman yoksa Idle'a geç
                 navAgent.ResetPath();
+                unit.SetTarget(null); // ← hedefi temizle
                 if (animMgr != null)
                     animMgr.SetCharacterState(CharacterStateType.Idle);
                 continue;
@@ -194,8 +192,19 @@ public class SpawnManager : MonoBehaviour
             {
                 // Hedefe ulaşıldı - Attack state'inde kal
                 navAgent.ResetPath();
-                if (animMgr != null)
-                    animMgr.SetCharacterState(CharacterStateType.Attack);
+                Unit target = unit.GetCurrentTarget();
+                if (target != null && target.IsAlive())
+                {
+                    if (animMgr != null)
+                        animMgr.SetCharacterState(CharacterStateType.Attack);
+                }
+                else
+                {
+                    // Hedef ölü veya yok - temizle ve Idle'a geç
+                    unit.SetTarget(null);
+                    if (animMgr != null)
+                        animMgr.SetCharacterState(CharacterStateType.Idle);
+                }
                 continue;
             }
 
@@ -249,6 +258,9 @@ public class SpawnManager : MonoBehaviour
                 continue;
 
             if (!other.gameObject.activeInHierarchy)
+                continue;
+
+            if (!other.IsAlive())
                 continue;
 
             if (other.owner == current.owner)

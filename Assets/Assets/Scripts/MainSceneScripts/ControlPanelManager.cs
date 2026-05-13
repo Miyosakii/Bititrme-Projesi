@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
@@ -6,17 +6,17 @@ public class ControlPanelManager : MonoBehaviour
 {
     [SerializeField] private Canvas controlPanelCanvas;
 
-    // Takım 1
+    // TakÄ±m 1
     [SerializeField] private SpawnManager spawnManager1;
     [SerializeField] private TMP_Dropdown characterDropdown1;
     [SerializeField] private TMP_InputField characterCountInput1;
 
-    // Takım 2
+    // TakÄ±m 2
     [SerializeField] private SpawnManager spawnManager2;
     [SerializeField] private TMP_Dropdown characterDropdown2;
     [SerializeField] private TMP_InputField characterCountInput2;
 
-    // Tek Oluştur Butonu
+    // Tek OluÅŸtur Butonu
     [SerializeField] private Button createButton;
 
     private GameObject[] characterPrefabs;
@@ -27,16 +27,16 @@ public class ControlPanelManager : MonoBehaviour
         LoadCharacterPrefabs();
         SetupDropdowns();
         SetupCreateButton();
-        
-        // Canvas başta açık olsun
+
+        // Canvas baÅŸta aÃ§Ä±k olsun
         if (controlPanelCanvas != null)
             controlPanelCanvas.enabled = true;
 
         Time.timeScale = 0f;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
-        
-        Debug.Log("Control Panel açılı - Oyun durduruldu");
+
+        Debug.Log("Control Panel aÃ§Ä±lÄ± - Oyun durduruldu");
     }
 
     void Update()
@@ -48,7 +48,7 @@ public class ControlPanelManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Canvas'ı aç/kapat
+    /// Canvas'Ä± aÃ§/kapat
     /// </summary>
     private void ToggleControlPanel()
     {
@@ -62,27 +62,27 @@ public class ControlPanelManager : MonoBehaviour
             Time.timeScale = 0f;
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
-            Debug.Log("Control Panel açıldı");
+            Debug.Log("Control Panel aÃ§Ä±ldÄ±");
         }
         else
         {
             Time.timeScale = 1f;
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
-            Debug.Log("Control Panel kapatıldı");
+            Debug.Log("Control Panel kapatÄ±ldÄ±");
         }
     }
 
     /// <summary>
-    /// Resources/Characters klasöründen prefabları yükle
+    /// Resources/Characters klasÃ¶rÃ¼nden prefablarÄ± yÃ¼kle
     /// </summary>
     private void LoadCharacterPrefabs()
     {
         characterPrefabs = Resources.LoadAll<GameObject>("Characters");
-        
+
         if (characterPrefabs == null || characterPrefabs.Length == 0)
         {
-            Debug.LogError("Characters klasöründe prefab bulunamadı!");
+            Debug.LogError("Characters klasÃ¶rÃ¼nde prefab bulunamadÄ±!");
         }
     }
 
@@ -101,7 +101,7 @@ public class ControlPanelManager : MonoBehaviour
             return;
 
         dropdown.ClearOptions();
-        
+
         foreach (var prefab in characterPrefabs)
         {
             dropdown.options.Add(new TMP_Dropdown.OptionData(prefab.name));
@@ -111,59 +111,92 @@ public class ControlPanelManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Oluştur butonunu kur
+    /// OluÅŸtur butonunu kur ve inputfield deÄŸiÅŸimlerini dinle
     /// </summary>
     private void SetupCreateButton()
     {
         if (createButton != null)
             createButton.onClick.AddListener(OnCreateButtonClicked);
+
+        // InputField deÄŸiÅŸtiÄŸinde butonu tekrar aktif et
+        if (characterCountInput1 != null)
+            characterCountInput1.onValueChanged.AddListener(OnAnyInputChanged);
+        if (characterCountInput2 != null)
+            characterCountInput2.onValueChanged.AddListener(OnAnyInputChanged);
     }
 
     /// <summary>
-    /// Oluştur butonuna basınca her iki takımı oluştur
+    /// OluÅŸtur butonuna basÄ±nca her iki takÄ±mÄ± oluÅŸtur.
+    /// Herhangi bir inputfield geÃ§ersizse buton devre dÄ±ÅŸÄ± bÄ±rakÄ±lÄ±r ve iÅŸlem durur.
     /// </summary>
     private void OnCreateButtonClicked()
     {
-        // Takım 1 ayarlarını oku ve oluştur
-        int team1Count = GetCharacterCountFromInput(characterCountInput1);
+        // Her iki inputfield'Ä± doÄŸrula; herhangi biri geÃ§ersizse iÅŸlemi durdur
+        bool input1Valid = GetCharacterCountFromInput(characterCountInput1, out int team1Count);
+        bool input2Valid = GetCharacterCountFromInput(characterCountInput2, out int team2Count);
+
+        if (!input1Valid || !input2Valid)
+        {
+            createButton.interactable = false;
+            Debug.LogWarning("GeÃ§ersiz girdi! LÃ¼tfen her iki alana pozitif tam sayÄ± giriniz.");
+            return;
+        }
+
+        // TakÄ±m 1 ayarlarÄ±nÄ± oku ve oluÅŸtur
         int team1Index = characterDropdown1.value;
-        
+
         if (team1Count > 0 && team1Index >= 0)
         {
             spawnManager1.prefab = characterPrefabs[team1Index];
             spawnManager1.spawnCount = team1Count;
             spawnManager1.Spawn();
-            Debug.Log($"? Takım 1 oluşturuldu: {characterPrefabs[team1Index].name} x{team1Count}");
+            Debug.Log($"âœ“ TakÄ±m 1 oluÅŸturuldu: {characterPrefabs[team1Index].name} x{team1Count}");
         }
 
-        // Takım 2 ayarlarını oku ve oluştur
-        int team2Count = GetCharacterCountFromInput(characterCountInput2);
+        // TakÄ±m 2 ayarlarÄ±nÄ± oku ve oluÅŸtur
         int team2Index = characterDropdown2.value;
-        
+
         if (team2Count > 0 && team2Index >= 0)
         {
             spawnManager2.prefab = characterPrefabs[team2Index];
             spawnManager2.spawnCount = team2Count;
             spawnManager2.Spawn();
-            Debug.Log($"? Takım 2 oluşturuldu: {characterPrefabs[team2Index].name} x{team2Count}");
+            Debug.Log($"âœ“ TakÄ±m 2 oluÅŸturuldu: {characterPrefabs[team2Index].name} x{team2Count}");
         }
 
-        // Canvas'ı kapat ve oyunu başlat
+        // Canvas'Ä± kapat ve oyunu baÅŸlat
         ToggleControlPanel();
     }
 
     /// <summary>
-    /// InputField'dan sayıyı oku
+    /// InputField'dan sayÄ±yÄ± oku.
+    /// GeÃ§erli pozitif tam sayÄ± girilmiÅŸse true ve deÄŸeri out parametresiyle dÃ¶ner;
+    /// aksi hÃ¢lde false dÃ¶ner ve count 0 olarak set edilir.
     /// </summary>
-    private int GetCharacterCountFromInput(TMP_InputField inputField)
+    private bool GetCharacterCountFromInput(TMP_InputField inputField, out int count)
     {
+        count = 0;
+
         if (inputField == null || string.IsNullOrEmpty(inputField.text))
-            return 0;
+        {
+            Debug.LogWarning("InputField boÅŸ!");
+            return false;
+        }
 
-        if (int.TryParse(inputField.text, out int count) && count > 0)
-            return count;
+        if (int.TryParse(inputField.text, out count) && count > 0)
+            return true;
 
-        Debug.LogWarning("Geçerli bir sayı giriniz!");
-        return 0;
+        Debug.LogWarning($"GeÃ§ersiz girdi: \"{inputField.text}\" â€” LÃ¼tfen pozitif bir tam sayÄ± giriniz.");
+        return false;
+    }
+
+    /// <summary>
+    /// Herhangi bir inputfield deÄŸiÅŸtiÄŸinde butonu tekrar aktif et,
+    /// bÃ¶ylece kullanÄ±cÄ± yanlÄ±ÅŸ girdiyi dÃ¼zeltebilir.
+    /// </summary>
+    private void OnAnyInputChanged(string _)
+    {
+        if (createButton != null)
+            createButton.interactable = true;
     }
 }

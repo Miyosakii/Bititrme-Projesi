@@ -1,24 +1,24 @@
-ï»¿// CharacterAttribute.cs - SADECE can ve hasar sistemi
+// CharacterAttribute.cs - SADECE can ve hasar sistemi
 using UnityEngine;
 
 public class CharacterAttribute : MonoBehaviour
 {
-    // Prefab ayarlarÄ±
+    // Prefab ayarlarý
     public static float prefabMaxHealth = 100f;
     public static float attackPower = 20f;
-    public static float collisionDistance = 1f;  // Eski sistem (collider Ã§arpÄ±ÅŸmasÄ±)
-    public static float attackRange = 2.5f;      // YENÄ°: SaldÄ±rÄ± menzili
+    public static float collisionDistance = 1f;  // Eski sistem (collider çarpýþmasý)
+    public static float attackRange = 2.5f;      // YENÝ: Saldýrý menzili
     public static float damageInterval = 1f;
 
-    // Ã–rnek ayarlarÄ±
+    // Örnek ayarlarý
     [SerializeField] private float currentHealth;
     private float maxHealth;
     private Unit targetUnit;
     private CharacterAttribute targetAttribute;
-    
-    // Cache iÃ§in
+
+    // Cache için
     private AnimationManager animationManager;
-    
+
     void Start()
     {
         maxHealth = prefabMaxHealth;
@@ -38,8 +38,8 @@ public class CharacterAttribute : MonoBehaviour
         if (targetUnit != null && targetUnit.gameObject.activeInHierarchy)
         {
             float distance = Vector3.Distance(transform.position, targetUnit.transform.position);
-            
-            // Mesafe Ã§ok fazla artarsa hedef bÄ±rak (5 birim)
+
+            // Mesafe çok fazla artarsa hedef býrak (5 birim)
             if (distance > 5f)
             {
                 targetUnit = null;
@@ -82,7 +82,7 @@ public class CharacterAttribute : MonoBehaviour
             Die();
         }
 
-        Debug.Log($"{gameObject.name} hasar aldÄ±: {damage}, Kalan can: {currentHealth}");
+        Debug.Log($"{gameObject.name} hasar aldý: {damage}, Kalan can: {currentHealth}");
     }
 
     public void Heal(float amount)
@@ -91,14 +91,14 @@ public class CharacterAttribute : MonoBehaviour
         if (currentHealth > maxHealth)
             currentHealth = maxHealth;
 
-        Debug.Log($"{gameObject.name} iyileÅŸtirildi: {amount}, Toplam can: {currentHealth}");
+        Debug.Log($"{gameObject.name} iyileþtirildi: {amount}, Toplam can: {currentHealth}");
     }
 
     void Die()
     {
-        Debug.Log($"{gameObject.name} Ã¶ldÃ¼!");
+        Debug.Log($"{gameObject.name} öldü!");
 
-        // Ã–lÃ¼m state'ini ayarla
+        // Ölüm state'ini ayarla
         if (animationManager != null)
             animationManager.PlayFallingBackState();
 
@@ -144,7 +144,7 @@ public class CharacterAttribute : MonoBehaviour
     }
 
     /// <summary>
-    /// Hedefin menzil iÃ§inde olup olmadÄ±ÄŸÄ±nÄ± kontrol et
+    /// Hedefin menzil içinde olup olmadýðýný kontrol et
     /// </summary>
     public bool IsTargetInAttackRange()
     {
@@ -156,7 +156,7 @@ public class CharacterAttribute : MonoBehaviour
     }
 
     /// <summary>
-    /// Hedefin mesafesini dÃ¶ndÃ¼r
+    /// Hedefin mesafesini döndür
     /// </summary>
     public float GetDistanceToTarget()
     {

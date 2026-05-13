@@ -23,26 +23,9 @@ public class AnimationManager : MonoBehaviour
         // Component referanslarını cache'le
         animator = GetComponent<Animator>();
         
-        // Eğer aynı obje üzerinde Animator yoksa, child'ları kontrol et
-        if (animator == null)
-            animator = GetComponentInChildren<Animator>();
-        
-        // Yine bulamazsa uyar
-        if (animator == null)
-            Debug.LogError($"Animator bulunamadı {gameObject.name} veya alt objelerinde!");
-
         animationController = GetComponent<AnimationController>();
         characterState = GetComponent<CharacterState>();
         navMeshAgent = GetComponent<NavMeshAgent>();
-
-        if (animationController == null)
-            Debug.LogError($"AnimationController bulunamadı: {gameObject.name}");
-
-        if (characterState == null)
-            Debug.LogError($"CharacterState bulunamadı: {gameObject.name}");
-
-        if (navMeshAgent == null)
-            Debug.LogWarning($"NavMeshAgent bulunamadı: {gameObject.name}");
     }
 
     void Update()
@@ -154,9 +137,8 @@ public class AnimationManager : MonoBehaviour
             yield break;
 
         while (unit != null && unit.gameObject.activeInHierarchy && 
-               unit.GetCurrentTarget() != null && unit.GetCurrentTarget().health > 0)
+               unit.GetCurrentTarget() != null && unit.GetCurrentTarget().IsAlive())
         {
-            unit.StartAttack();
             
             if (animator != null)
             {
@@ -165,13 +147,26 @@ public class AnimationManager : MonoBehaviour
             
             // Animasyonun ortasını bekle
             yield return new WaitForSeconds(0.5f);
-            
+
+            if (unit.GetCurrentTarget() == null || !unit.GetCurrentTarget().IsAlive())
+                break;
+
             // Hasar ver
-            unit.DealDamageToNearby();
-            
+            unit.TryAttack();
+
             // Sonraki saldırıya kadar bekle
-            yield return new WaitForSeconds(unit.attackCooldown - 0.5f);
+            yield return new WaitForSeconds(unit.data.attackCooldown - 0.5f);
+
+            if (unit.GetCurrentTarget() == null || !unit.GetCurrentTarget().IsAlive())
+                break;
         }
+
+        Debug.Log($"{gameObject.name} loop bitti, Idle'a geçiliyor");
+        attackCoroutine = null;
+        unit.SetTarget(null);
+
+        characterState.CurrentState = CharacterStateType.Idle;
+        animationController.PlayIdleAnimation();
 
         // ⭐ Loop bittiğinde - Yeni hedef ara
         if (unit != null && unit.gameObject.activeInHierarchy)

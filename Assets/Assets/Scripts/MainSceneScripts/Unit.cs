@@ -127,18 +127,32 @@ public class Unit : MonoBehaviour
         if (owner == null)
             return;
 
+        // Bu takımda aktif karakter kaldı mı?
         if (!owner.HasActiveUnitsInTeam())
         {
+            // Kaybeden takım
             int losingTeamId = owner.teamId;
             int winningTeamId = losingTeamId == 0 ? 1 : 0;
 
             Debug.Log($"<color=red>❌ Takım {losingTeamId} KAYBETTI!</color>");
+            Debug.Log($"<color=green>🏆 Takım {winningTeamId} KAZANDI!</color>");
 
-            // ⭐ UI Manager'a görev devret
-            GameEndManager.ShowVictory(winningTeamId);
-
-            NotifyGameEnd(winningTeamId);
+            // ⭐ GÜNCELLEME: Gecikmeli oyun durması ve GameEndManager çağrısı
+            StartCoroutine(EndGameWithDelay(winningTeamId));
         }
+    }
+
+    // ⭐ YENİ: Oyun bitişini gecikmeleme
+    private IEnumerator EndGameWithDelay(int winningTeamId)
+    {
+        // Karakterlerin ölüm animasyonlarını görmek için bekle
+        yield return new WaitForSeconds(2f);
+
+        // Artık oyunu durdur ve ekranı göster
+        GameEndManager.ShowVictory(winningTeamId);
+
+        // ⭐ YENİ: Kazanan takımın tüm karakterlerini güncelle
+        NotifyGameEnd(winningTeamId);
     }
 
     // ⭐ YENİ: Oyun bittiğinde tüm karakterlere haber ver

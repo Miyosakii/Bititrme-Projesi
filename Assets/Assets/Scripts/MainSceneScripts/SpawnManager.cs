@@ -96,8 +96,14 @@ public class SpawnManager : MonoBehaviour
             if (navAgent != null)
             {
                 navAgent.stoppingDistance = stoppingDistance;
-                navAgent.ResetPath();
                 navAgent.enabled = true;
+
+                // ⭐ YENİ: NavMesh Surface Bulma ve Pozisyon Ayarlama
+                UnityEngine.AI.NavMeshHit hit;
+                if (UnityEngine.AI.NavMesh.SamplePosition(obj.transform.position, out hit, 2.0f, UnityEngine.AI.NavMesh.AllAreas))
+                {
+                    navAgent.Warp(hit.position); // Ajanı tam olarak geçerli yüzeye ışınlar
+                }
             }
 
             AnimationManager animMgr = obj.GetComponent<AnimationManager>();
@@ -111,7 +117,14 @@ public class SpawnManager : MonoBehaviour
         int row = index / rowSize;
         int col = index % rowSize;
 
-        Vector3 basePos = transform.position + new Vector3(col * spacing, 0, row * spacing);
+        Vector3 basePos = transform.position + new Vector3(col * spacing, 5f, row * spacing);
+        
+        // ⭐ Y pozisyonunu Terrain'in üstüne ayarla
+        RaycastHit hit;
+        if (Physics.Raycast(basePos + Vector3.up * 100f, Vector3.down, out hit))
+        {
+            basePos.y = hit.point.y + 0.1f;
+        }
         
         Vector3 jitter = new Vector3(
             Random.Range(-positionJitterRange, positionJitterRange),

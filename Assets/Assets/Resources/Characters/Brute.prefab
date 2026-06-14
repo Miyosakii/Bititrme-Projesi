@@ -200,7 +200,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 811608e19899de64da096c672ca898bf, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -305.1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 811608e19899de64da096c672ca898bf, type: 3}
       propertyPath: m_LocalPosition.y
@@ -208,7 +208,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 811608e19899de64da096c672ca898bf, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 59.38
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 811608e19899de64da096c672ca898bf, type: 3}
       propertyPath: m_LocalRotation.w
@@ -311,7 +311,7 @@ NavMeshAgent:
   m_Height: 2
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
+  m_ObstacleAvoidanceType: 2
 --- !u!114 &5552568139528446814
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -385,6 +385,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Unit
   data: {fileID: 11400000, guid: 9ddc1f0b44240044aa152b8d34a9d5f2, type: 2}
   teamIndicatorImage: {fileID: 3975018723217068068}
+  victoryText: {fileID: 0}
+  victoryTMP: {fileID: 0}
   teamId: 0
   health: 0
   owner: {fileID: 0}

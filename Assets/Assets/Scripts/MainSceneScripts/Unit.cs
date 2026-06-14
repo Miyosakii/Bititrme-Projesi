@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.AI;
-using UnityEngine.UI; // ⭐ YENİ: UI bileşenleri için
+using UnityEngine.UI;
+using TMPro; // ⭐ YENİ: UI bileşenleri için
 
 public class Unit : MonoBehaviour
 {
@@ -10,6 +11,9 @@ public class Unit : MonoBehaviour
 
     // ⭐ YENİ: Canvas Referansı
     [SerializeField] private Image teamIndicatorImage;
+    [SerializeField] private Text victoryText;
+    [SerializeField] private TextMeshProUGUI victoryTMP;
+    private Canvas victoryCanvas; // ⭐ Canvas referansı
 
     // Çalışma zamanı değerleri
     [HideInInspector] public int teamId = 0;
@@ -27,6 +31,7 @@ public class Unit : MonoBehaviour
     {
         navAgent = GetComponent<NavMeshAgent>();
         animMgr = GetComponent<AnimationManager>();
+        victoryTMP = GetComponent<TextMeshProUGUI>();
     }
 
     void Start()
@@ -43,7 +48,17 @@ public class Unit : MonoBehaviour
         if (teamIndicatorImage == null)
         {
             teamIndicatorImage = GetComponentInChildren<Image>();
+        }
 
+        // ⭐ GÜNCELLEME: Victory Canvas'ını otomatik bul
+        if (victoryCanvas == null)
+        {
+            victoryCanvas = Object.FindAnyObjectByType<Canvas>();
+            if (victoryCanvas != null)
+            {
+                victoryTMP = victoryCanvas.GetComponentInChildren<TextMeshProUGUI>();
+                victoryText = victoryCanvas.GetComponentInChildren<Text>();
+            }
         }
 
         if (navAgent != null)
@@ -112,17 +127,16 @@ public class Unit : MonoBehaviour
         if (owner == null)
             return;
 
-        // Bu takımda aktif karakter kaldı mı?
         if (!owner.HasActiveUnitsInTeam())
         {
-            // Kaybeden takım
             int losingTeamId = owner.teamId;
             int winningTeamId = losingTeamId == 0 ? 1 : 0;
 
             Debug.Log($"<color=red>❌ Takım {losingTeamId} KAYBETTI!</color>");
-            Debug.Log($"<color=green>🏆 Takım {winningTeamId} KAZANDI!</color>");
 
-            // ⭐ YENİ: Kazanan takımın tüm karakterlerini güncelle
+            // ⭐ UI Manager'a görev devret
+            GameEndManager.ShowVictory(winningTeamId);
+
             NotifyGameEnd(winningTeamId);
         }
     }
@@ -189,12 +203,6 @@ public class Unit : MonoBehaviour
             {
                 // Kazanan takım - Idle animasyonu
                 animMgr.SetCharacterState(CharacterStateType.Idle);
-                Debug.Log($"✓ {gameObject.name} - KAZANDI!");
-            }
-            else
-            {
-                // Kaybeden takım - zaten ölü
-                Debug.Log($"✗ {gameObject.name} - KAYBETTI!");
             }
         }
     }

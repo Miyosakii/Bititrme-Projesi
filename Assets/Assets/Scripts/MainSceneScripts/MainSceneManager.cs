@@ -6,4 +6,9 @@ public class MainSceneManager : MonoBehaviour
     {
        SceneManager.LoadScene(0);
     }
+
+    public void RestartGame()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
 }

@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Golem
   m_EditorClassIdentifier: Assembly-CSharp::CharacterData
   characterName: Golem
-  maxHealth: 100
+  maxHealth: 20
   attackDamage: 10
   attackRange: 2
-  attackCooldown: 3
+  attackCooldown: 1.5
   moveSpeed: 2

@@ -17,6 +17,9 @@ public class AnimationManager : MonoBehaviour
     private AnimationController animationController;
 
     private Coroutine attackCoroutine;
+    
+    // ⭐ YENİ: Oyun bittiğini gösteren flag
+    private bool gameEnded = false;
 
     void Start()
     {
@@ -30,8 +33,24 @@ public class AnimationManager : MonoBehaviour
 
     void Update()
     {
+        // ⭐ YENİ: Oyun biterse animasyon güncellemesini durdur
+        if (gameEnded)
+            return;
+
         // NavMesh Agent hareket hızına göre animasyonu otomatik güncelle
         UpdateAnimationBasedOnNavMeshAgent();
+    }
+
+    // ⭐ YENİ: Oyun bittiğinde çağrılacak metod
+    public void OnGameEnd()
+    {
+        gameEnded = true;
+        
+        // Attack loop'u durdur
+        if (attackCoroutine != null)
+            StopCoroutine(attackCoroutine);
+        
+        attackCoroutine = null;
     }
 
     /// <summary>

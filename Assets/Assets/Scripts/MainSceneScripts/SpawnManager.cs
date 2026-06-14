@@ -1,9 +1,17 @@
 ﻿using UnityEngine;
 using UnityEngine.AI;
 using System.Collections.Generic;
+using UnityEngine.UI;
+using UnityEngine.Rendering;
+using System.Linq; // Dosyanın başına ekleyin
 
 public class SpawnManager : MonoBehaviour
 {
+    // ⭐ YENİ: Taraf Rengi
+    [Header("Taraf Ayarları")]
+    public int teamId = 0; // 0 = Kırmızı, 1 = Mavi vb.
+    public Color teamColor = Color.red;
+
     public GameObject prefab;
     public int spawnCount = 20;
 
@@ -67,19 +75,23 @@ public class SpawnManager : MonoBehaviour
 
             obj.SetActive(true);
 
-            // ⭐ ANIMATOR KONTROL VE EKLEME
             EnsureAnimatorExists(obj);
 
             Unit unit = obj.GetComponent<Unit>();
             if (unit == null)
                 unit = obj.AddComponent<Unit>();
 
+            // ⭐ YENİ: Taraf Atama
+            unit.teamId = this.teamId;
             unit.owner = this;
             unit.spawnTime = Time.time;
 
+            // ⭐ YENİ: Canvas'ın rengini set et
+            unit.SetTeamColor(this.teamColor);
+
             if (!allUnits.Contains(unit))
                 allUnits.Add(unit);
-            // NavMesh Agent'i kur ve Stopping Distance'ı ayarla
+
             NavMeshAgent navAgent = obj.GetComponent<NavMeshAgent>();
             if (navAgent != null)
             {
@@ -93,7 +105,7 @@ public class SpawnManager : MonoBehaviour
                 animMgr.SetCharacterState(CharacterStateType.Idle);
         }
     }
-    
+
     public Vector3 CalculatePosition(int index)
     {
         int row = index / rowSize;
@@ -300,6 +312,55 @@ public class SpawnManager : MonoBehaviour
         else
         {
             Debug.Log($"✓ {character.name} → Animator bulundu");
+        }
+    }
+
+    /// <summary>
+    /// Havuzda aktif karakter kalıp kalmadığını kontrol et
+    /// </summary>
+    public bool HasActiveUnits()
+    {
+        return allUnits.Where(unit => unit != null && unit.gameObject.activeInHierarchy && unit.IsAlive()).Count() > 0;
+        // veya daha kısa:
+        // return allUnits.Any(unit => unit != null && unit.gameObject.activeInHierarchy && unit.IsAlive());
+    }
+
+    /// <summary>
+    /// Bu takımda aktif karakter kalıp kalmadığını kontrol et
+    /// </summary>
+    public bool HasActiveUnitsInTeam()
+    {
+        return allUnits.Where(unit => 
+            unit != null && 
+            unit.gameObject.activeInHierarchy && 
+            unit.IsAlive() && 
+            unit.owner == this).Count() > 0;
+        // veya daha kısa:
+        // return allUnits.Any(unit => 
+        //     unit != null && 
+        //     unit.gameObject.activeInHierarchy && 
+        //     unit.IsAlive() && 
+        //     unit.owner == this);
+    }
+
+    /// <summary>
+    /// Havuzun durumunu kontrol et ve mesaj döndür
+    /// </summary>
+    public string GetPoolStatus()
+    {
+        int activeCount = allUnits.Where(unit => 
+            unit != null && 
+            unit.gameObject.activeInHierarchy && 
+            unit.IsAlive() && 
+            unit.owner == this).Count();
+
+        if (activeCount == 0)
+        {
+            return $"❌ Takım {teamId} - Havuzda karakter kalmadı!";
+        }
+        else
+        {
+            return $"✓ Takım {teamId} - Aktif karakterler: {activeCount}";
         }
     }
 }

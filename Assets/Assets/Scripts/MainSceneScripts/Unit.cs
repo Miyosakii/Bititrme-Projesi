@@ -1,21 +1,19 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
-using TMPro; // ⭐ YENİ: UI bileşenleri için
+using TMPro;
 
 public class Unit : MonoBehaviour
 {
     [Header("Karakter Verisi")]
-    public CharacterData data; // Inspector'dan .asset dosyasını sürükle
+    public CharacterData data;
 
-    // ⭐ YENİ: Canvas Referansı
     [SerializeField] private Image teamIndicatorImage;
     [SerializeField] private Text victoryText;
     [SerializeField] private TextMeshProUGUI victoryTMP;
-    private Canvas victoryCanvas; // ⭐ Canvas referansı
+    private Canvas victoryCanvas;
 
-    // Çalışma zamanı değerleri
     [HideInInspector] public int teamId = 0;
     [HideInInspector] public float health;
     [HideInInspector] public SpawnManager owner;
@@ -26,6 +24,11 @@ public class Unit : MonoBehaviour
     private Unit currentTarget;
     private NavMeshAgent navAgent;
     private AnimationManager animMgr;
+    
+    // ⭐ DÜZELTME: Data'dan alınan değerler
+    private float separationRadius;
+    private float separationForce;
+    private Vector3 separationVector = Vector3.zero;
 
     void Awake()
     {
@@ -44,13 +47,15 @@ public class Unit : MonoBehaviour
 
         health = data.maxHealth;
 
-        // ⭐ YENİ: Eğer Canvas atanmamışsa otomatik bul
+        // ⭐ YENİ: Data'dan Separation değerlerini al
+        separationRadius = data.separationRadius;
+        separationForce = data.separationForce;
+
         if (teamIndicatorImage == null)
         {
             teamIndicatorImage = GetComponentInChildren<Image>();
         }
 
-        // ⭐ GÜNCELLEME: Victory Canvas'ını otomatik bul
         if (victoryCanvas == null)
         {
             victoryCanvas = Object.FindAnyObjectByType<Canvas>();
@@ -67,17 +72,75 @@ public class Unit : MonoBehaviour
         CombatSystem.RegisterUnit(this);
     }
 
+    void Update()
+    {
+        if (navAgent != null && navAgent.enabled && hasStartedMoving)
+        {
+            if (Time.frameCount % 3 == 0)
+            {
+                UpdateSeparation();
+            }
+            
+            ApplySeparationForce();
+        }
+    }
+
     void OnDisable()
     {
         CombatSystem.UnregisterUnit(this);
         SpawnManager.allUnits.Remove(this);
     }
 
+    private void UpdateSeparation()
+    {
+        separationVector = Vector3.zero;
+        int neighborCount = 0;
+
+        foreach (var other in SpawnManager.allUnits)
+        {
+            if (other == null || other == this || !other.gameObject.activeInHierarchy)
+                continue;
+
+            if (!other.IsAlive())
+                continue;
+
+            Vector3 toOther = other.transform.position - transform.position;
+            float distance = toOther.magnitude;
+
+            // ⭐ GÜNCELLEME: Data'dan alınan separationRadius kullan
+            if (distance < separationRadius && distance > 0.01f)
+            {
+                separationVector -= toOther.normalized / distance;
+                neighborCount++;
+            }
+        }
+
+        if (neighborCount > 0)
+        {
+            // ⭐ GÜNCELLEME: Data'dan alınan separationForce kullan
+            separationVector = separationVector.normalized * separationForce;
+        }
+    }
+
+    private void ApplySeparationForce()
+    {
+        if (navAgent == null || !navAgent.enabled)
+            return;
+
+        Vector3 desiredVelocity = navAgent.desiredVelocity;
+
+        Vector3 combinedVelocity = (desiredVelocity + separationVector).normalized;
+
+        if (desiredVelocity.magnitude > 0)
+        {
+            navAgent.velocity = combinedVelocity * desiredVelocity.magnitude;
+        }
+    }
+
     public void TakeDamage(float damage)
     {
         health -= damage;
         Debug.Log($"{gameObject.name} TakeDamage çağrıldı! health: {health}");
-
 
         if (health <= 0)
             Die();
@@ -97,14 +160,12 @@ public class Unit : MonoBehaviour
 
         lastAttackTime = Time.time;
         currentTarget.TakeDamage(data.attackDamage);
-
     }
 
     public void Die()
     {
         health = 0;
         Debug.Log($"{gameObject.name} öldü!");
-        Debug.Log($"{gameObject.name} öldü! health: {health}, IsAlive: {IsAlive()}");
 
         if (animMgr != null)
             animMgr.SetCharacterState(CharacterStateType.FallingBack);
@@ -115,65 +176,33 @@ public class Unit : MonoBehaviour
             navAgent.enabled = false;
         }
 
-        // ⭐ YENİ: Karakter öldüğü zaman takım durumunu kontrol et
         CheckTeamStatus();
 
         StartCoroutine(DeactivateAfterDelay(2f));
     }
 
-    // ⭐ YENİ: Takım durumunu kontrol et
     private void CheckTeamStatus()
     {
         if (owner == null)
             return;
 
-        // Bu takımda aktif karakter kaldı mı?
         if (!owner.HasActiveUnitsInTeam())
         {
-            // Kaybeden takım
             int losingTeamId = owner.teamId;
             int winningTeamId = losingTeamId == 0 ? 1 : 0;
 
             Debug.Log($"<color=red>❌ Takım {losingTeamId} KAYBETTI!</color>");
             Debug.Log($"<color=green>🏆 Takım {winningTeamId} KAZANDI!</color>");
 
-            // ⭐ GÜNCELLEME: Gecikmeli oyun durması ve GameEndManager çağrısı
             StartCoroutine(EndGameWithDelay(winningTeamId));
         }
     }
 
-    // ⭐ YENİ: Oyun bitişini gecikmeleme
     private IEnumerator EndGameWithDelay(int winningTeamId)
     {
-        // Karakterlerin ölüm animasyonlarını görmek için bekle
         yield return new WaitForSeconds(2f);
-
-        // Artık oyunu durdur ve ekranı göster
+        Time.timeScale = 0f;
         GameEndManager.ShowVictory(winningTeamId);
-
-        // ⭐ YENİ: Kazanan takımın tüm karakterlerini güncelle
-        NotifyGameEnd(winningTeamId);
-    }
-
-    // ⭐ YENİ: Oyun bittiğinde tüm karakterlere haber ver
-    private void NotifyGameEnd(int winningTeamId)
-    {
-        foreach (var unit in SpawnManager.allUnits)
-        {
-            if (unit == null || !unit.gameObject.activeInHierarchy)
-                continue;
-
-            // Kazanan takımın karakterleri
-            if (unit.owner != null && unit.owner.teamId == winningTeamId && unit.IsAlive())
-            {
-                unit.OnGameEnd(true); // Kazanan
-            }
-            // Kaybeden takımın karakterleri
-            else if (unit.owner != null && unit.owner.teamId != winningTeamId && unit.IsAlive())
-            {
-                unit.OnGameEnd(false); // Kaybeden
-            }
-        }
     }
 
     private IEnumerator DeactivateAfterDelay(float delay)
@@ -182,46 +211,37 @@ public class Unit : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    // ⭐ YENİ: Taraf Rengini Set Etme Metodu
+    public bool IsAlive()
+    {
+        return health > 0;
+    }
+
     public void SetTeamColor(Color color)
     {
         if (teamIndicatorImage != null)
-        {
             teamIndicatorImage.color = color;
-        }
-        else
-        {
-            Debug.LogWarning($"{gameObject.name} üzerinde Image bulunamadı!");
-        }
     }
 
-    // ⭐ YENİ: Oyun bittiğinde çağrılacak metod
-    public void OnGameEnd(bool isWinner)
+    public void SetTarget(Unit target)
     {
-        // NavMesh Agent'i devre dışı bırak (hareket etmesin)
-        if (navAgent != null)
-        {
-            navAgent.ResetPath();
-            navAgent.enabled = false;
-        }
-
-        // Saldırı ve hareket kontrolünü devre dışı bırak
-        currentTarget = null;
-
-        // ⭐ YENİ: AnimationManager'a bildir
-        if (animMgr != null)
-        {
-            animMgr.OnGameEnd();
-            
-            if (isWinner)
-            {
-                // Kazanan takım - Idle animasyonu
-                animMgr.SetCharacterState(CharacterStateType.Idle);
-            }
-        }
+        currentTarget = target;
     }
 
-    public Unit GetCurrentTarget() => currentTarget;
-    public void SetTarget(Unit target) => currentTarget = target;
-    public bool IsAlive() => health > 0;
+    public Unit GetTarget()
+    {
+        return currentTarget;
+    }
+
+    public Unit GetCurrentTarget()
+    {
+        return currentTarget;
+    }
+
+    public float GetDistanceToTarget()
+    {
+        if (currentTarget == null)
+            return float.MaxValue;
+
+        return Vector3.Distance(transform.position, currentTarget.transform.position);
+    }
 }

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Brute
   m_EditorClassIdentifier: Assembly-CSharp::CharacterData
   characterName: Brute
-  maxHealth: 10
+  maxHealth: 100
   attackDamage: 20
   attackRange: 2
   attackCooldown: 3.14

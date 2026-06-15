@@ -1,22 +1,22 @@
-// CharacterAttribute.cs - SADECE can ve hasar sistemi
+ï»¿// CharacterAttribute.cs - SADECE can ve hasar sistemi
 using UnityEngine;
 
 public class CharacterAttribute : MonoBehaviour
 {
-    // Prefab ayarlarý
+    // Prefab ayarlarÄ±
     public static float prefabMaxHealth = 100f;
     public static float attackPower = 20f;
-    public static float collisionDistance = 1f;  // Eski sistem (collider çarpýþmasý)
-    public static float attackRange = 2.5f;      // YENÝ: Saldýrý menzili
+    public static float collisionDistance = 1f;  // Eski sistem (collider Ã§arpÄ±ÅŸmasÄ±)
+    public static float attackRange = 2.5f;      // YENÄ°: SaldÄ±rÄ± menzili
     public static float damageInterval = 1f;
 
-    // Örnek ayarlarý
+    // Ã–rnek ayarlarÄ±
     [SerializeField] private float currentHealth;
     private float maxHealth;
     private Unit targetUnit;
     private CharacterAttribute targetAttribute;
 
-    // Cache için
+    // Cache iÃ§in
     private AnimationManager animationManager;
 
     void Start()
@@ -39,7 +39,7 @@ public class CharacterAttribute : MonoBehaviour
         {
             float distance = Vector3.Distance(transform.position, targetUnit.transform.position);
 
-            // Mesafe çok fazla artarsa hedef býrak (5 birim)
+            // Mesafe Ã§ok fazla artarsa hedef bÄ±rak (5 birim)
             if (distance > 5f)
             {
                 targetUnit = null;
@@ -50,25 +50,12 @@ public class CharacterAttribute : MonoBehaviour
 
     public void DealDamageToTarget()
     {
-        if (targetUnit == null || !targetUnit.gameObject.activeInHierarchy)
-            return;
-
-        if (targetAttribute == null)
-            targetAttribute = targetUnit.GetComponent<CharacterAttribute>();
-
-        if (targetAttribute != null)
+        Unit unit = GetComponent<Unit>();
+        Unit targetUnit = unit.GetTarget();  // â† Unit'den al
+        
+        if (targetUnit != null)
         {
-            float damage = GetAttackPower();
-            targetAttribute.TakeDamage(damage);
-
-            Debug.Log($"{gameObject.name} -> {targetUnit.gameObject.name} hasar verdi: {damage}");
-
-            if (!targetAttribute.IsAlive())
-            {
-                targetUnit.gameObject.SetActive(false);
-                targetUnit = null;
-                targetAttribute = null;
-            }
+            targetUnit.TakeDamage(GetAttackPower());
         }
     }
 
@@ -82,7 +69,7 @@ public class CharacterAttribute : MonoBehaviour
             Die();
         }
 
-        Debug.Log($"{gameObject.name} hasar aldý: {damage}, Kalan can: {currentHealth}");
+        Debug.Log($"{gameObject.name} hasar aldÄ±: {damage}, Kalan can: {currentHealth}");
     }
 
     public void Heal(float amount)
@@ -91,14 +78,14 @@ public class CharacterAttribute : MonoBehaviour
         if (currentHealth > maxHealth)
             currentHealth = maxHealth;
 
-        Debug.Log($"{gameObject.name} iyileþtirildi: {amount}, Toplam can: {currentHealth}");
+        Debug.Log($"{gameObject.name} iyileÅŸtirildi: {amount}, Toplam can: {currentHealth}");
     }
 
     void Die()
     {
-        Debug.Log($"{gameObject.name} öldü!");
+        Debug.Log($"{gameObject.name} Ã¶ldÃ¼!");
 
-        // Ölüm state'ini ayarla
+        // Ã–lÃ¼m state'ini ayarla
         if (animationManager != null)
             animationManager.PlayFallingBackState();
 
@@ -144,7 +131,7 @@ public class CharacterAttribute : MonoBehaviour
     }
 
     /// <summary>
-    /// Hedefin menzil içinde olup olmadýðýný kontrol et
+    /// Hedefin menzil iÃ§inde olup olmadÄ±ÄŸÄ±nÄ± kontrol et
     /// </summary>
     public bool IsTargetInAttackRange()
     {
@@ -156,7 +143,7 @@ public class CharacterAttribute : MonoBehaviour
     }
 
     /// <summary>
-    /// Hedefin mesafesini döndür
+    /// Hedefin mesafesini dÃ¶ndÃ¼r
     /// </summary>
     public float GetDistanceToTarget()
     {

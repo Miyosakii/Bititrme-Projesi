@@ -13,8 +13,10 @@ MonoBehaviour:
   m_Name: Mutant
   m_EditorClassIdentifier: Assembly-CSharp::CharacterData
   characterName: Mutant
-  maxHealth: 10
-  attackDamage: 15
+  maxHealth: 100
+  attackDamage: 35
   attackRange: 3
   attackCooldown: 3.24
   moveSpeed: 4
+  separationRadius: 1
+  separationForce: 1.5

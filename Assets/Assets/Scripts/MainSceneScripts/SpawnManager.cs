@@ -3,13 +3,13 @@ using UnityEngine.AI;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine.Rendering;
-using System.Linq; // Dosyanın başına ekleyin
+using System.Linq;
 
 public class SpawnManager : MonoBehaviour
 {
-    // ⭐ YENİ: Taraf Rengi
+    // ⭐ Taraf Rengi
     [Header("Taraf Ayarları")]
-    public int teamId = 0; // 0 = Kırmızı, 1 = Mavi vb.
+    public int teamId = 0;
     public Color teamColor = Color.red;
 
     public GameObject prefab;
@@ -27,7 +27,6 @@ public class SpawnManager : MonoBehaviour
 
     public Transform parent;
 
-    // Otomatik spawn'u devre dışı bırak
     public bool autoSpawnOnStart = false;
 
     List<GameObject> pool = new List<GameObject>();
@@ -35,7 +34,6 @@ public class SpawnManager : MonoBehaviour
 
     void Start()
     {
-        // Sadece autoSpawnOnStart true ise spawn et
         if (autoSpawnOnStart)
             Spawn();
     }
@@ -81,12 +79,10 @@ public class SpawnManager : MonoBehaviour
             if (unit == null)
                 unit = obj.AddComponent<Unit>();
 
-            // ⭐ YENİ: Taraf Atama
             unit.teamId = this.teamId;
             unit.owner = this;
             unit.spawnTime = Time.time;
 
-            // ⭐ YENİ: Canvas'ın rengini set et
             unit.SetTeamColor(this.teamColor);
 
             if (!allUnits.Contains(unit))
@@ -98,11 +94,10 @@ public class SpawnManager : MonoBehaviour
                 navAgent.stoppingDistance = stoppingDistance;
                 navAgent.enabled = true;
 
-                // ⭐ YENİ: NavMesh Surface Bulma ve Pozisyon Ayarlama
                 UnityEngine.AI.NavMeshHit hit;
                 if (UnityEngine.AI.NavMesh.SamplePosition(obj.transform.position, out hit, 2.0f, UnityEngine.AI.NavMesh.AllAreas))
                 {
-                    navAgent.Warp(hit.position); // Ajanı tam olarak geçerli yüzeye ışınlar
+                    navAgent.Warp(hit.position);
                 }
             }
 
@@ -119,7 +114,6 @@ public class SpawnManager : MonoBehaviour
 
         Vector3 basePos = transform.position + new Vector3(col * spacing, 5f, row * spacing);
         
-        // ⭐ Y pozisyonunu Terrain'in üstüne ayarla
         RaycastHit hit;
         if (Physics.Raycast(basePos + Vector3.up * 100f, Vector3.down, out hit))
         {
@@ -154,7 +148,6 @@ public class SpawnManager : MonoBehaviour
         {
             obj.SetActive(false);
             
-            // NavMesh Agent'i devre dışı bırak
             NavMeshAgent navAgent = obj.GetComponent<NavMeshAgent>();
             if (navAgent != null)
                 navAgent.ResetPath();
@@ -185,10 +178,8 @@ public class SpawnManager : MonoBehaviour
                     animMgr.SetCharacterState(CharacterStateType.Running);
             }
 
-            // ⭐ MEVCUT HEDEF KONTROLÜ
             Unit nearest = unit.GetCurrentTarget();
 
-            // Hedef ölmüşse veya geçersizse yenisini bul
             if (nearest == null || !nearest.gameObject.activeInHierarchy || !nearest.IsAlive())
             {
                 nearest = FindNearestEnemy(unit);
@@ -196,7 +187,6 @@ public class SpawnManager : MonoBehaviour
                 if (nearest != null)
                 {
                     unit.SetTarget(nearest);
-                    // ⭐ Yeni hedef bulundu - Running state'ine geç
                     if (animMgr != null)
                         animMgr.SetCharacterState(CharacterStateType.Running);
                 }
@@ -204,18 +194,15 @@ public class SpawnManager : MonoBehaviour
             
             if (nearest == null)
             {
-                // ⭐ Düşman yoksa Idle'a geç
                 navAgent.ResetPath();
-                unit.SetTarget(null); // ← hedefi temizle
+                unit.SetTarget(null);
                 if (animMgr != null)
                     animMgr.SetCharacterState(CharacterStateType.Idle);
                 continue;
             }
 
-            // Hedef ulaşma kontrolü
             if (HasReachedDestination(navAgent))
             {
-                // Hedefe ulaşıldı - Attack state'inde kal
                 navAgent.ResetPath();
                 Unit target = unit.GetCurrentTarget();
                 if (target != null && target.IsAlive())
@@ -225,7 +212,6 @@ public class SpawnManager : MonoBehaviour
                 }
                 else
                 {
-                    // Hedef ölü veya yok - temizle ve Idle'a geç
                     unit.SetTarget(null);
                     if (animMgr != null)
                         animMgr.SetCharacterState(CharacterStateType.Idle);
@@ -233,37 +219,27 @@ public class SpawnManager : MonoBehaviour
                 continue;
             }
 
-            // Hedefe doğru hareket et
             SetNavMeshDestination(navAgent, nearest.transform.position);
         }
     }
 
-    /// <summary>
-    /// NavMesh Agent'in hedefe ulaşıp ulaşmadığını kontrol et
-    /// </summary>
     bool HasReachedDestination(NavMeshAgent navAgent)
     {
         if (navAgent == null || !navAgent.enabled || !navAgent.isOnNavMesh)
             return false;
 
-        // Eğer path yoksa veya pending ise henüz ulaşmamış
         if (!navAgent.hasPath || navAgent.pathPending)
             return false;
 
-        // Eğer path hatası varsa ulaşamaz
         if (navAgent.hasPath && navAgent.remainingDistance > navAgent.stoppingDistance)
             return false;
 
-        // Eğer rotation bekliyorsa henüz bitmemiş sayıl
         if (!navAgent.hasPath || navAgent.desiredVelocity.sqrMagnitude > 0f)
             return false;
 
         return true;
     }
 
-    /// <summary>
-    /// NavMesh Agent'in hedefi ayarla
-    /// </summary>
     void SetNavMeshDestination(NavMeshAgent navAgent, Vector3 targetPosition)
     {
         if (navAgent == null || !navAgent.isOnNavMesh)
@@ -302,23 +278,17 @@ public class SpawnManager : MonoBehaviour
         return nearest;
     }
 
-    /// <summary>
-    /// Karakterde Animator olduğundan emin ol
-    /// </summary>
     private void EnsureAnimatorExists(GameObject character)
     {
-        // Önce root'ta kontrol et
         Animator animator = character.GetComponent<Animator>();
         
         if (animator == null)
         {
-            // Child'larda kontrol et
             animator = character.GetComponentInChildren<Animator>();
         }
 
         if (animator == null)
         {
-            // Hala bulamazsa uyar ver
             Debug.LogError($"HATA: {character.name} içinde Animator bulunamadı! " +
                            $"Lütfen prefab'a Animator component'i ekleyin.");
         }
@@ -328,19 +298,11 @@ public class SpawnManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Havuzda aktif karakter kalıp kalmadığını kontrol et
-    /// </summary>
     public bool HasActiveUnits()
     {
         return allUnits.Where(unit => unit != null && unit.gameObject.activeInHierarchy && unit.IsAlive()).Count() > 0;
-        // veya daha kısa:
-        // return allUnits.Any(unit => unit != null && unit.gameObject.activeInHierarchy && unit.IsAlive());
     }
 
-    /// <summary>
-    /// Bu takımda aktif karakter kalıp kalmadığını kontrol et
-    /// </summary>
     public bool HasActiveUnitsInTeam()
     {
         return allUnits.Where(unit => 
@@ -348,17 +310,8 @@ public class SpawnManager : MonoBehaviour
             unit.gameObject.activeInHierarchy && 
             unit.IsAlive() && 
             unit.owner == this).Count() > 0;
-        // veya daha kısa:
-        // return allUnits.Any(unit => 
-        //     unit != null && 
-        //     unit.gameObject.activeInHierarchy && 
-        //     unit.IsAlive() && 
-        //     unit.owner == this);
     }
 
-    /// <summary>
-    /// Havuzun durumunu kontrol et ve mesaj döndür
-    /// </summary>
     public string GetPoolStatus()
     {
         int activeCount = allUnits.Where(unit => 

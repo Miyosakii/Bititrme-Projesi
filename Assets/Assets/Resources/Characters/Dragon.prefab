@@ -248,7 +248,7 @@ NavMeshAgent:
   m_Height: 2
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 3
+  m_ObstacleAvoidanceType: 1
 --- !u!114 &3989605020641621778
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -282,6 +282,7 @@ MonoBehaviour:
   owner: {fileID: 0}
   spawnTime: 0
   hasStartedMoving: 0
+  lastPathfindFrame: -999
 --- !u!114 &1203567954018944499
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -16,8 +16,13 @@ public class CharacterData : ScriptableObject
 
     [Header("Hareket")]
     public float moveSpeed = 3.5f;
+    public float stoppingDistance = 0.5f;
 
     [Header("Çarpışma Kaçınması")]
     public float separationRadius = 1f;      // ⭐ YENİ: Algılama yarıçapı
     public float separationForce = 1.5f;     // ⭐ YENİ: İtme gücü
+
+    [Header("Animasyon")]
+    public float aimRotationOffset = 0f;
+
 }

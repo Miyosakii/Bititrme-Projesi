@@ -18,5 +18,6 @@ MonoBehaviour:
   attackRange: 3
   attackCooldown: 3.24
   moveSpeed: 4
+  stoppingDistance: 3
   separationRadius: 1
   separationForce: 1.5

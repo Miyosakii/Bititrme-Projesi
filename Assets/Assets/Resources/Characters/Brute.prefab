@@ -200,15 +200,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: ea74aa3b2b15fe14489bdf845e5454b3, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1277.76
+      value: -4.71
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ea74aa3b2b15fe14489bdf845e5454b3, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 35.01
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ea74aa3b2b15fe14489bdf845e5454b3, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -10.83
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ea74aa3b2b15fe14489bdf845e5454b3, type: 3}
       propertyPath: m_LocalRotation.w
@@ -319,7 +319,7 @@ NavMeshAgent:
   m_Height: 2
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
+  m_ObstacleAvoidanceType: 1
 --- !u!114 &3918742374625500489
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -400,6 +400,7 @@ MonoBehaviour:
   owner: {fileID: 0}
   spawnTime: 0
   hasStartedMoving: 0
+  lastPathfindFrame: -999
 --- !u!4 &5229742527639474095 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: ea74aa3b2b15fe14489bdf845e5454b3, type: 3}

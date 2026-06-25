@@ -91,7 +91,7 @@ public class SpawnManager : MonoBehaviour
             NavMeshAgent navAgent = obj.GetComponent<NavMeshAgent>();
             if (navAgent != null)
             {
-                navAgent.stoppingDistance = stoppingDistance;
+                navAgent.stoppingDistance = unit.data != null ? unit.data.stoppingDistance : stoppingDistance;
                 navAgent.enabled = true;
 
                 UnityEngine.AI.NavMeshHit hit;
@@ -219,7 +219,12 @@ public class SpawnManager : MonoBehaviour
                 continue;
             }
 
-            SetNavMeshDestination(navAgent, nearest.transform.position);
+            int offset = Mathf.Abs(unit.GetInstanceID()) % 5;
+            if ((Time.frameCount + offset - unit.lastPathfindFrame) >= 5)
+            {
+                unit.lastPathfindFrame = Time.frameCount;
+                SetNavMeshDestination(navAgent, nearest.transform.position);
+            }
         }
     }
 

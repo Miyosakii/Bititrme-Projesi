@@ -19,6 +19,7 @@ public class Unit : MonoBehaviour
     [HideInInspector] public SpawnManager owner;
     [HideInInspector] public float spawnTime;
     [HideInInspector] public bool hasStartedMoving = false;
+    [HideInInspector] public int lastPathfindFrame = -999; // ⭐ YENİ
 
     private float lastAttackTime = -999f;
     private Unit currentTarget;
@@ -158,6 +159,8 @@ public class Unit : MonoBehaviour
         if (distance > data.attackRange)
             return;
 
+        FaceTarget();
+
         lastAttackTime = Time.time;
         currentTarget.TakeDamage(data.attackDamage);
     }
@@ -243,5 +246,27 @@ public class Unit : MonoBehaviour
             return float.MaxValue;
 
         return Vector3.Distance(transform.position, currentTarget.transform.position);
+    }
+
+    private void FaceTarget()
+    {
+        if (currentTarget == null) return;
+
+        Vector3 direction = (currentTarget.transform.position - transform.position).normalized;
+        direction.y = 0f;
+
+        if (direction == Vector3.zero) return;
+
+        Quaternion lookRotation = Quaternion.LookRotation(direction);
+
+        // ⭐ CharacterData'dan offset uygula
+        if (data != null && data.aimRotationOffset != 0f)
+            lookRotation *= Quaternion.Euler(0f, data.aimRotationOffset, 0f);
+
+        transform.rotation = Quaternion.Slerp(
+            transform.rotation,
+            lookRotation,
+            Time.deltaTime * 10f
+        );
     }
 }

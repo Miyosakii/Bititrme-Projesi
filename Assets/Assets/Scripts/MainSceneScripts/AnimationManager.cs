@@ -155,15 +155,15 @@ public class AnimationManager : MonoBehaviour
         if (unit == null)
             yield break;
 
-        while (unit != null && unit.gameObject.activeInHierarchy && 
+        while (unit != null && unit.gameObject.activeInHierarchy &&
                unit.GetCurrentTarget() != null && unit.GetCurrentTarget().IsAlive())
         {
-            
+
             if (animator != null)
             {
                 animator.SetTrigger("Attack");
             }
-            
+
             // Animasyonun ortasını bekle
             yield return new WaitForSeconds(0.5f);
 
@@ -180,32 +180,21 @@ public class AnimationManager : MonoBehaviour
                 break;
         }
 
-        Debug.Log($"{gameObject.name} loop bitti, Idle'a geçiliyor");
+        // Saldırı bitti (hedef öldü veya kayboldu)
         attackCoroutine = null;
-        unit.SetTarget(null);
 
-        characterState.CurrentState = CharacterStateType.Idle;
-        animationController.PlayIdleAnimation();
-
-        // ⭐ Loop bittiğinde - Yeni hedef ara
-        if (unit != null && unit.gameObject.activeInHierarchy)
+        if (unit != null)
         {
-            Unit newTarget = unit.owner.FindNearestEnemy(unit);
-            
-            if (newTarget != null)
-            {
-                // Yeni hedef bulundu
-                unit.SetTarget(newTarget);
-                SetCharacterState(CharacterStateType.Running);
-            }
-            else
-            {
-                // Hedef yok - Idle'a geç
-                SetCharacterState(CharacterStateType.Idle);
-            }
+            unit.SetTarget(null);
         }
 
-        attackCoroutine = null;
+        // Sadece Idle durumuna geç.
+        // Yeni hedef bulma ve koşturma işini UnitMovementManager kendi Update'inde otomatik yapacak!
+        if (characterState != null)
+            characterState.CurrentState = CharacterStateType.Idle;
+
+        if (animationController != null)
+            animationController.PlayIdleAnimation();
     }
 
     /// <summary>

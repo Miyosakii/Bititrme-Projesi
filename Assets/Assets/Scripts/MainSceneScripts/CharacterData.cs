@@ -25,4 +25,9 @@ public class CharacterData : ScriptableObject
     [Header("Animasyon")]
     public float aimRotationOffset = 0f;
 
+    [Header("Menzilli Birim Ayarları")]
+    public bool isRanged = false;            // Karakter okçu mu?
+    public float retreatDistance = 3f;       // Düşman bu mesafeden yakına gelirse geri kaçar
+    public float retreatDistanceMove = 4f;   // Bir seferde ne kadar geriye doğru adım atacağı
+
 }

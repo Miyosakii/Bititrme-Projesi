@@ -17,8 +17,11 @@ MonoBehaviour:
   attackDamage: 25
   attackRange: 80
   attackCooldown: 4
-  moveSpeed: 3.5
+  moveSpeed: 5
   stoppingDistance: 80
   separationRadius: 1
-  separationForce: 1.5
+  separationForce: 0.5
   aimRotationOffset: 90
+  isRanged: 1
+  retreatDistance: 20
+  retreatDistanceMove: 20

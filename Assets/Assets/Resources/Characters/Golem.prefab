@@ -2177,6 +2177,7 @@ GameObject:
   - component: {fileID: -1240634238968175921}
   - component: {fileID: 7989940109446508396}
   - component: {fileID: -5575815890329357861}
+  - component: {fileID: 3377204113080368454}
   m_Layer: 0
   m_Name: Golem
   m_TagString: Untagged
@@ -2331,6 +2332,18 @@ MonoBehaviour:
   spawnTime: 0
   hasStartedMoving: 0
   lastPathfindFrame: -999
+--- !u!114 &3377204113080368454
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7088600385777052897}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06b81f6388e314f4f8a2557ed0512dab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MeleeAttackBehavior
 --- !u!1 &7170109598830114953
 GameObject:
   m_ObjectHideFlags: 0

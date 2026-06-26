@@ -19,23 +19,24 @@ public class Unit : MonoBehaviour
     [HideInInspector] public SpawnManager owner;
     [HideInInspector] public float spawnTime;
     [HideInInspector] public bool hasStartedMoving = false;
-    [HideInInspector] public int lastPathfindFrame = -999; // ⭐ YENİ
+    [HideInInspector] public int lastPathfindFrame = -999;
 
     private float lastAttackTime = -999f;
     private Unit currentTarget;
     private NavMeshAgent navAgent;
     private AnimationManager animMgr;
-    
-    // ⭐ DÜZELTME: Data'dan alınan değerler
+
     private float separationRadius;
     private float separationForce;
     private Vector3 separationVector = Vector3.zero;
+    private BaseAttackBehavior attackBehavior;
 
     void Awake()
     {
         navAgent = GetComponent<NavMeshAgent>();
         animMgr = GetComponent<AnimationManager>();
         victoryTMP = GetComponent<TextMeshProUGUI>();
+        attackBehavior = GetComponent<BaseAttackBehavior>();
     }
 
     void Start()
@@ -48,7 +49,6 @@ public class Unit : MonoBehaviour
 
         health = data.maxHealth;
 
-        // ⭐ YENİ: Data'dan Separation değerlerini al
         separationRadius = data.separationRadius;
         separationForce = data.separationForce;
 
@@ -68,7 +68,12 @@ public class Unit : MonoBehaviour
         }
 
         if (navAgent != null)
+        {
             navAgent.speed = data.moveSpeed;
+            // ⭐ YENİ: NavMesh'in otomatik dönmesini kapatıyoruz.
+            // Böylece hareket ederken veya geri kaçarken rotasyonu tamamen biz kontrol edebiliriz.
+            navAgent.updateRotation = false;
+        }
 
         CombatSystem.RegisterUnit(this);
     }
@@ -81,8 +86,19 @@ public class Unit : MonoBehaviour
             {
                 UpdateSeparation();
             }
-            
+
             ApplySeparationForce();
+        }
+
+        // ⭐ YENİ: Karakter hayattaysa ve geçerli bir rakibi/hedefi varsa yüzünü HER ZAMAN ona çevirir
+        if (IsAlive() && currentTarget != null && currentTarget.gameObject.activeInHierarchy && currentTarget.IsAlive())
+        {
+            FaceTarget();
+        }
+        // ⭐ YENİ: Eğer hedefi yoksa ama hareket ediyorsa (örn: ilk doğma anı veya arama evresi), yürüdüğü yöne baksın
+        else if (navAgent != null && navAgent.enabled && navAgent.velocity.sqrMagnitude > 0.01f)
+        {
+            FaceMovementDirection();
         }
     }
 
@@ -108,7 +124,6 @@ public class Unit : MonoBehaviour
             Vector3 toOther = other.transform.position - transform.position;
             float distance = toOther.magnitude;
 
-            // ⭐ GÜNCELLEME: Data'dan alınan separationRadius kullan
             if (distance < separationRadius && distance > 0.01f)
             {
                 separationVector -= toOther.normalized / distance;
@@ -118,7 +133,6 @@ public class Unit : MonoBehaviour
 
         if (neighborCount > 0)
         {
-            // ⭐ GÜNCELLEME: Data'dan alınan separationForce kullan
             separationVector = separationVector.normalized * separationForce;
         }
     }
@@ -129,7 +143,6 @@ public class Unit : MonoBehaviour
             return;
 
         Vector3 desiredVelocity = navAgent.desiredVelocity;
-
         Vector3 combinedVelocity = (desiredVelocity + separationVector).normalized;
 
         if (desiredVelocity.magnitude > 0)
@@ -149,20 +162,13 @@ public class Unit : MonoBehaviour
 
     public void TryAttack()
     {
-        if (currentTarget == null || !currentTarget.gameObject.activeInHierarchy)
-            return;
-
-        if (Time.time - lastAttackTime < data.attackCooldown)
-            return;
-
+        if (currentTarget == null || !currentTarget.gameObject.activeInHierarchy) return;
+        if (Time.time - lastAttackTime < data.attackCooldown) return;
         float distance = Vector3.Distance(transform.position, currentTarget.transform.position);
-        if (distance > data.attackRange)
-            return;
+        if (distance > data.attackRange) return;
 
         FaceTarget();
-
         lastAttackTime = Time.time;
-        currentTarget.TakeDamage(data.attackDamage);
     }
 
     public void Die()
@@ -248,25 +254,55 @@ public class Unit : MonoBehaviour
         return Vector3.Distance(transform.position, currentTarget.transform.position);
     }
 
+    /// <summary>
+    /// Karakterin yüzünü hedefe pürüzsüzce çevirir
+    /// </summary>
     private void FaceTarget()
     {
         if (currentTarget == null) return;
 
         Vector3 direction = (currentTarget.transform.position - transform.position).normalized;
-        direction.y = 0f;
+        direction.y = 0f; // Yukarı/aşağı eğilmeleri engelle (Y ekseninde sabit tut)
 
         if (direction == Vector3.zero) return;
 
         Quaternion lookRotation = Quaternion.LookRotation(direction);
 
-        // ⭐ CharacterData'dan offset uygula
+        // CharacterData'dan offset uygula (Model ters bakıyorsa düzeltmek için)
         if (data != null && data.aimRotationOffset != 0f)
             lookRotation *= Quaternion.Euler(0f, data.aimRotationOffset, 0f);
 
+        // Slerp ile yumuşak geçiş sağla (Hızı duruma göre 10f yerine değiştirebilirsin)
         transform.rotation = Quaternion.Slerp(
             transform.rotation,
             lookRotation,
-            Time.deltaTime * 10f
+            Time.deltaTime * 12f
         );
+    }
+
+    /// <summary>
+    /// ⭐ YENİ: Karakterin aktif hedefi yoksa, hareket ettiği yöne doğru dönmesini sağlar.
+    /// </summary>
+    private void FaceMovementDirection()
+    {
+        Vector3 direction = navAgent.velocity.normalized;
+        direction.y = 0f;
+
+        if (direction == Vector3.zero) return;
+
+        Quaternion lookRotation = Quaternion.LookRotation(direction);
+        transform.rotation = Quaternion.Slerp(
+            transform.rotation,
+            lookRotation,
+            Time.deltaTime * 6f
+        );
+    }
+    public void OnAttackAnimationEvent()
+    {
+        if (currentTarget != null && currentTarget.IsAlive() && attackBehavior != null)
+        {
+            // Okçuysa ok fırlatır, kılıçlıysa kılıç vurur. Unit bununla ilgilenmez.
+            attackBehavior.ExecuteAttack(currentTarget, data.attackDamage);
+        }
     }
 }

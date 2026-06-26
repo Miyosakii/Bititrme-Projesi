@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 5438062692372065703}
   - component: {fileID: 1609279433642359135}
   - component: {fileID: 2999895257854606697}
+  - component: {fileID: -3878904979694156908}
   m_Layer: 0
   m_Name: Dragon
   m_TagString: Untagged
@@ -117,6 +118,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c260970457c10a4da30ff9dfbb8d856, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AnimationManager
+--- !u!114 &-3878904979694156908
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1967664328499276312}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06b81f6388e314f4f8a2557ed0512dab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MeleeAttackBehavior
 --- !u!1001 &246411622989840355
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -125,38 +138,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3792449538506633704}
     m_Modifications:
-    - target: {fileID: 735689439622268874, guid: ad376970315119049b48338ec26dad96, type: 3}
-      propertyPath: m_ApplyRootMotion
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3634864289653261451, guid: ad376970315119049b48338ec26dad96, type: 3}
-      propertyPath: m_Height
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 3634864289653261451, guid: ad376970315119049b48338ec26dad96, type: 3}
-      propertyPath: m_Radius
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 3634864289653261451, guid: ad376970315119049b48338ec26dad96, type: 3}
-      propertyPath: m_BaseOffset
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3634864289653261451, guid: ad376970315119049b48338ec26dad96, type: 3}
-      propertyPath: m_AgentTypeID
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3634864289653261451, guid: ad376970315119049b48338ec26dad96, type: 3}
-      propertyPath: m_WalkableMask
-      value: 4294967295
-      objectReference: {fileID: 0}
-    - target: {fileID: 3634864289653261451, guid: ad376970315119049b48338ec26dad96, type: 3}
-      propertyPath: m_StoppingDistance
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 3634864289653261451, guid: ad376970315119049b48338ec26dad96, type: 3}
-      propertyPath: m_ObstacleAvoidanceType
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 1494583877365688, guid: 8431058aa84a65044bbe46298ab86574, type: 3}
       propertyPath: m_Name
       value: RedDragon1.1
@@ -205,14 +186,66 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 22100000, guid: 3fa4ab8e5793aba458e6d81c3a80dc5e, type: 2}
+    - target: {fileID: 735689439622268874, guid: ad376970315119049b48338ec26dad96, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3634864289653261451, guid: ad376970315119049b48338ec26dad96, type: 3}
+      propertyPath: m_Height
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 3634864289653261451, guid: ad376970315119049b48338ec26dad96, type: 3}
+      propertyPath: m_Radius
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3634864289653261451, guid: ad376970315119049b48338ec26dad96, type: 3}
+      propertyPath: m_BaseOffset
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3634864289653261451, guid: ad376970315119049b48338ec26dad96, type: 3}
+      propertyPath: m_AgentTypeID
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3634864289653261451, guid: ad376970315119049b48338ec26dad96, type: 3}
+      propertyPath: m_WalkableMask
+      value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: 3634864289653261451, guid: ad376970315119049b48338ec26dad96, type: 3}
+      propertyPath: m_StoppingDistance
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 3634864289653261451, guid: ad376970315119049b48338ec26dad96, type: 3}
+      propertyPath: m_ObstacleAvoidanceType
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 3634864289653261451, guid: ad376970315119049b48338ec26dad96, type: 3}
     - {fileID: 5720209656836405438, guid: ad376970315119049b48338ec26dad96, type: 3}
     - {fileID: 1203567954018944499, guid: ad376970315119049b48338ec26dad96, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1494583877365688, guid: 8431058aa84a65044bbe46298ab86574, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8604926077627851274}
   m_SourcePrefab: {fileID: 100100000, guid: 8431058aa84a65044bbe46298ab86574, type: 3}
+--- !u!1 &247171588947890267 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1494583877365688, guid: 8431058aa84a65044bbe46298ab86574, type: 3}
+  m_PrefabInstance: {fileID: 246411622989840355}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &8604926077627851274
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 247171588947890267}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8c555b1a6ae2e34c927d3ebfdadba63, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AnimationEventProxy
 --- !u!4 &250937743052872537 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4763758474929338, guid: 8431058aa84a65044bbe46298ab86574, type: 3}

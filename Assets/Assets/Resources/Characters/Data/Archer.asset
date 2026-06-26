@@ -21,7 +21,7 @@ MonoBehaviour:
   stoppingDistance: 80
   separationRadius: 1
   separationForce: 0.5
-  aimRotationOffset: 90
+  aimRotationOffset: 0
   isRanged: 1
   retreatDistance: 20
   retreatDistanceMove: 20

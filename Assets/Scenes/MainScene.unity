@@ -1254,7 +1254,7 @@ GameObject:
   - component: {fileID: 322406109}
   - component: {fileID: 322406108}
   - component: {fileID: 322406107}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Terrain
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7442,13 +7442,25 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4289952615547613719, guid: e0a7dc3ed0ad7cb4188e1488fd2e9989, type: 3}
-      propertyPath: m_CullingMode
-      value: 1
+    - target: {fileID: 3311701916334505903, guid: e0a7dc3ed0ad7cb4188e1488fd2e9989, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7376606560366370386, guid: e0a7dc3ed0ad7cb4188e1488fd2e9989, type: 3}
-      propertyPath: m_ObstacleAvoidanceType
-      value: 1
+    - target: {fileID: 3311701916334505903, guid: e0a7dc3ed0ad7cb4188e1488fd2e9989, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.324
+      objectReference: {fileID: 0}
+    - target: {fileID: 3311701916334505903, guid: e0a7dc3ed0ad7cb4188e1488fd2e9989, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.255
+      objectReference: {fileID: 0}
+    - target: {fileID: 3405974550639488242, guid: e0a7dc3ed0ad7cb4188e1488fd2e9989, type: 3}
+      propertyPath: ShapeModule.radius.value
+      value: 0.32
+      objectReference: {fileID: 0}
+    - target: {fileID: 3405974550639488242, guid: e0a7dc3ed0ad7cb4188e1488fd2e9989, type: 3}
+      propertyPath: InitialModule.startSpeed.scalar
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -7463,10 +7475,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 161919496512333561, guid: 5e13da78d013ea94ea7103913d87ec29, type: 3}
-      propertyPath: m_Controller
-      value: 
-      objectReference: {fileID: 22100000, guid: 3fa4ab8e5793aba458e6d81c3a80dc5e, type: 2}
     - target: {fileID: 1967664328499276312, guid: 5e13da78d013ea94ea7103913d87ec29, type: 3}
       propertyPath: m_Name
       value: Dragon

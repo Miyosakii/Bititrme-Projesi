@@ -152,29 +152,20 @@ public class AnimationManager : MonoBehaviour
     private IEnumerator ContinuousAttackLoop()
     {
         Unit unit = GetComponent<Unit>();
-        if (unit == null)
-            yield break;
+        if (unit == null) yield break;
 
         while (unit != null && unit.gameObject.activeInHierarchy &&
                unit.GetCurrentTarget() != null && unit.GetCurrentTarget().IsAlive())
         {
-
+            // Sadece animasyonu tetikle. 
+            // Hasar, animasyon klibindeki Animation Event (OnAttackAnimationEvent) üzerinden otomatik verilecek.
             if (animator != null)
             {
                 animator.SetTrigger("Attack");
             }
 
-            // Animasyonun ortasını bekle
-            yield return new WaitForSeconds(0.5f);
-
-            if (unit.GetCurrentTarget() == null || !unit.GetCurrentTarget().IsAlive())
-                break;
-
-            // Hasar ver
-            unit.TryAttack();
-
-            // Sonraki saldırıya kadar bekle
-            yield return new WaitForSeconds(unit.data.attackCooldown - 0.5f);
+            // Bir sonraki saldırı hakkına kadar bekle (Cooldown)
+            yield return new WaitForSeconds(unit.data.attackCooldown);
 
             if (unit.GetCurrentTarget() == null || !unit.GetCurrentTarget().IsAlive())
                 break;

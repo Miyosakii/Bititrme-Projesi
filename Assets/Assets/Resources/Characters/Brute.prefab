@@ -270,6 +270,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ea74aa3b2b15fe14489bdf845e5454b3, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7438047812458768394}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ea74aa3b2b15fe14489bdf845e5454b3, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8534632167080765137}
   m_SourcePrefab: {fileID: 100100000, guid: ea74aa3b2b15fe14489bdf845e5454b3, type: 3}
 --- !u!1 &4888683449856300309 stripped
 GameObject:
@@ -401,6 +404,18 @@ MonoBehaviour:
   spawnTime: 0
   hasStartedMoving: 0
   lastPathfindFrame: -999
+--- !u!114 &8534632167080765137
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4888683449856300309}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06b81f6388e314f4f8a2557ed0512dab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MeleeAttackBehavior
 --- !u!4 &5229742527639474095 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: ea74aa3b2b15fe14489bdf845e5454b3, type: 3}

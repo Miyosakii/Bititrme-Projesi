@@ -7463,10 +7463,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 675222962791987241, guid: 5e13da78d013ea94ea7103913d87ec29, type: 3}
-      propertyPath: m_ApplyRootMotion
-      value: 0
-      objectReference: {fileID: 0}
+    - target: {fileID: 161919496512333561, guid: 5e13da78d013ea94ea7103913d87ec29, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 22100000, guid: 3fa4ab8e5793aba458e6d81c3a80dc5e, type: 2}
     - target: {fileID: 1967664328499276312, guid: 5e13da78d013ea94ea7103913d87ec29, type: 3}
       propertyPath: m_Name
       value: Dragon

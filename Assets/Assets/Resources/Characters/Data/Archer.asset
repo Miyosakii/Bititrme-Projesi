@@ -19,7 +19,7 @@ MonoBehaviour:
   attackCooldown: 4
   moveSpeed: 5
   stoppingDistance: 80
-  separationRadius: 1
+  separationRadius: 0.5
   separationForce: 0.5
   aimRotationOffset: 0
   isRanged: 1

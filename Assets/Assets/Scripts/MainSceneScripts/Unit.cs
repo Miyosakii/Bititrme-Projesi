@@ -75,6 +75,15 @@ public class Unit : MonoBehaviour
             navAgent.updateRotation = false;
         }
 
+        if (teamId == 0)
+        {
+            gameObject.layer = LayerMask.NameToLayer("Team0");
+        }
+        else if (teamId == 1)
+        {
+            gameObject.layer = LayerMask.NameToLayer("Team1");
+        }
+
         CombatSystem.RegisterUnit(this);
     }
 

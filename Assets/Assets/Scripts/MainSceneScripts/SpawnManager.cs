@@ -169,6 +169,16 @@ public class SpawnManager : MonoBehaviour
         }
     }
 
+    // Yeni yardımcı: GameObject ve tüm çocuklarının layer'ını ayarlar
+    private void SetLayerRecursively(GameObject root, int layer)
+    {
+        root.layer = layer;
+        foreach (Transform child in root.transform)
+        {
+            SetLayerRecursively(child.gameObject, layer);
+        }
+    }
+
     public bool HasActiveUnits()
     {
         return allUnits.Where(unit => unit != null && unit.gameObject.activeInHierarchy && unit.IsAlive()).Count() > 0;

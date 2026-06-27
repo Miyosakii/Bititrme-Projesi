@@ -28,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 2156919798831458018}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.689, z: 1.44}
+  m_LocalPosition: {x: 0, y: 1.34, z: 0.676}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -672,7 +672,7 @@ ParticleSystem:
     radiusThickness: 1
     donutRadius: 0.2
     m_Position: {x: 0, y: 0, z: 0}
-    m_Rotation: {x: -7, y: 0, z: 0}
+    m_Rotation: {x: 0, y: 0, z: 0}
     m_Scale: {x: 1, y: 1, z: 1}
     placementMode: 0
     m_MeshMaterialIndex: 0
@@ -5271,6 +5271,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RangedAttackBehavior
   arrowParticleSystem: {fileID: 3405974550639488242}
+  arcAngle: 30
 --- !u!4 &1883483171494992112 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 47da4938c23ec654b8b6b3de7857cc32, type: 3}

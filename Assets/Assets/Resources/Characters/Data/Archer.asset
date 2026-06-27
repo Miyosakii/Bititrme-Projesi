@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CharacterData
   characterName: Archer
   maxHealth: 100
-  attackDamage: 25
+  attackDamage: 40
   attackRange: 80
-  attackCooldown: 4
+  attackCooldown: 3
   moveSpeed: 5
   stoppingDistance: 80
   separationRadius: 0.5

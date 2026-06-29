@@ -16,8 +16,14 @@ MonoBehaviour:
   maxHealth: 150
   attackDamage: 20
   attackRange: 2
-  attackCooldown: 3.14
+  attackCooldown: 3.53
   moveSpeed: 3.5
   stoppingDistance: 3
   separationRadius: 1
   separationForce: 1.5
+  aimRotationOffset: 0
+  isFlying: 0
+  isRanged: 0
+  retreatDistance: 3
+  retreatDistanceMove: 4
+  aimHeightOffset: 0.7

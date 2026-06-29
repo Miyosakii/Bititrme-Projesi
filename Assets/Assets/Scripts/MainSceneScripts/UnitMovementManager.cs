@@ -1,21 +1,21 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.AI;
 using System.Collections.Generic;
 
 public class UnitMovementManager : MonoBehaviour
 {
-    [Header("Dinamik Bağlantı")]
-    [Tooltip("Bu hareket yöneticisinin kontrol edeceği SpawnManager")]
+    [Header("Dinamik BaÄŸlantÄ±")]
+    [Tooltip("Bu hareket yÃ¶neticisinin kontrol edeceÄŸi SpawnManager")]
     public SpawnManager mySpawner;
 
     void Start()
     {
-        // Eğer Inspector'dan sürüklemeyi unutursan, aynı objedeki Spawner'ı otomatik bulsun
+        // EÄŸer Inspector'dan sÃ¼rÃ¼klemeyi unutursan, aynÄ± objedeki Spawner'Ä± otomatik bulsun
         if (mySpawner == null)
             mySpawner = GetComponent<SpawnManager>();
 
         if (mySpawner == null)
-            Debug.LogError($"{gameObject.name} üzerinde SpawnManager bulunamadı!");
+            Debug.LogError($"{gameObject.name} Ã¼zerinde SpawnManager bulunamadÄ±!");
     }
 
     void Update()
@@ -28,10 +28,10 @@ public class UnitMovementManager : MonoBehaviour
 
     void UpdateTeamMovement()
     {
-        // Ortak listedeki tüm birimleri dönüyoruz...
+        // Ortak listedeki tÃ¼m birimleri dÃ¶nÃ¼yoruz...
         foreach (var unit in SpawnManager.allUnits)
         {
-            // ...ama SADECE bu spawner'a (bu takıma) ait olanları filtreleyip hareket ettiriyoruz!
+            // ...ama SADECE bu spawner'a (bu takÄ±ma) ait olanlarÄ± filtreleyip hareket ettiriyoruz!
             if (unit == null || !unit.gameObject.activeInHierarchy || unit.owner != mySpawner)
                 continue;
 
@@ -54,7 +54,7 @@ public class UnitMovementManager : MonoBehaviour
 
             Unit nearest = unit.GetCurrentTarget();
 
-            // Hedef öldüyse veya yoksa yeni hedef bul
+            // Hedef Ã¶ldÃ¼yse veya yoksa yeni hedef bul
             if (nearest == null || !nearest.gameObject.activeInHierarchy || !nearest.IsAlive())
             {
                 nearest = FindNearestEnemy(unit);
@@ -94,7 +94,7 @@ public class UnitMovementManager : MonoBehaviour
                 continue;
             }
 
-            // --- YOL BULMA VE KITING (GERİ ÇEKİLME) MANTIĞI ---
+            // --- YOL BULMA VE KITING (GERÄ° Ã‡EKÄ°LME) MANTIÄI ---
             int offset = Mathf.Abs(unit.GetInstanceID()) % 5;
             if ((Time.frameCount + offset - unit.lastPathfindFrame) >= 5)
             {
@@ -102,14 +102,14 @@ public class UnitMovementManager : MonoBehaviour
 
                 float distanceToEnemy = Vector3.Distance(unit.transform.position, nearest.transform.position);
 
-                // Eğer birim okçu ise ve düşman 'retreatDistance' mesafesinden daha yakına girdiyse
+                // EÄŸer birim okÃ§u ise ve dÃ¼ÅŸman 'retreatDistance' mesafesinden daha yakÄ±na girdiyse
                 if (unit.data != null && unit.data.isRanged && distanceToEnemy < unit.data.retreatDistance)
                 {
-                    // Düşmandan zıt yöne doğru bir vektör hesapla
+                    // DÃ¼ÅŸmandan zÄ±t yÃ¶ne doÄŸru bir vektÃ¶r hesapla
                     Vector3 retreatDir = (unit.transform.position - nearest.transform.position).normalized;
                     Vector3 targetRetreatPos = unit.transform.position + (retreatDir * unit.data.retreatDistanceMove);
 
-                    // Geri çekileceği yerin NavMesh üzerinde (uçurum vs. değil) olduğundan emin ol
+                    // Geri Ã§ekileceÄŸi yerin NavMesh Ã¼zerinde (uÃ§urum vs. deÄŸil) olduÄŸundan emin ol
                     UnityEngine.AI.NavMeshHit hit;
                     if (UnityEngine.AI.NavMesh.SamplePosition(targetRetreatPos, out hit, unit.data.retreatDistanceMove, UnityEngine.AI.NavMesh.AllAreas))
                     {
@@ -119,13 +119,13 @@ public class UnitMovementManager : MonoBehaviour
                     }
                     else
                     {
-                        // Arkası duvarsa yapacak bir şey yok, saldırmaya devam etsin
+                        // ArkasÄ± duvarsa yapacak bir ÅŸey yok, saldÄ±rmaya devam etsin
                         SetNavMeshDestination(navAgent, nearest.transform.position);
                     }
                 }
                 else
                 {
-                    // Okçu değilse veya düşman güvenli mesafedeyse normal takip yap
+                    // OkÃ§u deÄŸilse veya dÃ¼ÅŸman gÃ¼venli mesafedeyse normal takip yap
                     SetNavMeshDestination(navAgent, nearest.transform.position);
                 }
             }
@@ -152,14 +152,19 @@ public class UnitMovementManager : MonoBehaviour
         Unit nearest = null;
         float minDistance = float.MaxValue;
 
-        // Düşman bulurken global listeyi kullanıyoruz, bu sayede diğer takımı görebilirler
+        // DÃ¼ÅŸman bulurken global listeyi kullanÄ±yoruz, bu sayede diÄŸer takÄ±mÄ± gÃ¶rebilirler
         foreach (var other in SpawnManager.allUnits)
         {
             if (other == null || other == current) continue;
             if (!other.gameObject.activeInHierarchy || !other.IsAlive()) continue;
 
-            // Kendi takımımızdan olanları es geçiyoruz!
+            // Kendi takÄ±mÄ±mÄ±zdan olanlarÄ± es geÃ§iyoruz!
             if (other.owner == current.owner) continue;
+
+            // â­ YENÄ° KONTROL: EÄŸer ben YAKIN DÃ–VÃœÅ (Melee) isem ve karÅŸÄ±mdaki UÃ‡UYORSA, onu es geÃ§!
+            // Sadece okÃ§ular (isRanged == true) uÃ§an hedeflere vurabilir.
+            if (!current.data.isRanged && other.data != null && other.data.isFlying)
+                continue;
 
             float distance = Vector3.Distance(current.transform.position, other.transform.position);
             if (distance < minDistance)

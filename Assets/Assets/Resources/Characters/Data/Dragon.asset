@@ -15,13 +15,15 @@ MonoBehaviour:
   characterName: Dragon
   maxHealth: 300
   attackDamage: 15
-  attackRange: 6
+  attackRange: 10
   attackCooldown: 2.28
-  moveSpeed: 3.5
-  stoppingDistance: 6
+  moveSpeed: 10
+  stoppingDistance: 10
   separationRadius: 20
   separationForce: 1.5
   aimRotationOffset: 0
+  isFlying: 1
   isRanged: 0
   retreatDistance: 3
   retreatDistanceMove: 4
+  aimHeightOffset: 8

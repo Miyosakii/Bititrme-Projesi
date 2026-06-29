@@ -42,10 +42,11 @@ public class RangedAttackBehavior : BaseAttackBehavior
     {
         if (arrowParticleSystem != null && target != null)
         {
+            float aimHeight = (target.data != null) ? target.data.aimHeightOffset : 1.2f;
             // 1. Baþlangýç ve bitiþ noktalarýný belirle
             Vector3 startPos = arrowParticleSystem.transform.position;
             // Oku düþmanýn doðrudan merkezine/gövdesine niþan al
-            Vector3 targetPos = target.transform.position + (Vector3.up * 1f);
+            Vector3 targetPos = target.transform.position + (Vector3.up * aimHeight);
 
             // 2. Yatay mesafe (x) ve dikey yükseklik farkýný (y) hesapla
             Vector3 flatStart = new Vector3(startPos.x, 0f, startPos.z);

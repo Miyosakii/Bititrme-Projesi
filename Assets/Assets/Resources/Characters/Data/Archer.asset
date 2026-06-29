@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Archer
   m_EditorClassIdentifier: Assembly-CSharp::CharacterData
   characterName: Archer
-  maxHealth: 100
-  attackDamage: 40
+  maxHealth: 70
+  attackDamage: 35
   attackRange: 80
   attackCooldown: 3
   moveSpeed: 5
@@ -22,6 +22,8 @@ MonoBehaviour:
   separationRadius: 0.5
   separationForce: 0.5
   aimRotationOffset: 0
+  isFlying: 0
   isRanged: 1
   retreatDistance: 20
   retreatDistanceMove: 20
+  aimHeightOffset: 1.2

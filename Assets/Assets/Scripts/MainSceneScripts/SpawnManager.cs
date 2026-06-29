@@ -48,10 +48,25 @@ public class SpawnManager : MonoBehaviour
 
         Clear();
 
+        // Takım layer'ını hesapla (varsa)
+        string teamLayerName = $"Team{teamId}";
+        int teamLayer = LayerMask.NameToLayer(teamLayerName);
+        if (teamLayer == -1)
+        {
+            Debug.LogWarning($"Layer '{teamLayerName}' bulunamadı! Lütfen Project Settings -> Tags and Layers içinde '{teamLayerName}' layer'ını ekleyin.");
+        }
+
         for (int i = 0; i < spawnCount; i++)
         {
             Vector3 pos = CalculatePosition(i);
             GameObject obj = GetFromPool();
+
+            // Pool'dan geliyorsa parent'ı güncelle
+            if (parent != null)
+            {
+                obj.transform.SetParent(parent, true);
+            }
+
             obj.transform.position = pos;
             
             if (randomizeRotation)
@@ -64,6 +79,13 @@ public class SpawnManager : MonoBehaviour
             {
                 float randomScale = Random.Range(1f - scaleVariation, 1f + scaleVariation);
                 obj.transform.localScale = new Vector3(randomScale, randomScale, randomScale);
+            }
+
+            // Eğer takım layer'ı geçerliyse objenin tüm altlarını ve üstlerini ayarla
+            if (teamLayer != -1)
+            {
+                SetLayerRecursively(obj, teamLayer);
+                SetLayerOnParents(obj, teamLayer);
             }
 
             obj.SetActive(true);
@@ -86,14 +108,22 @@ public class SpawnManager : MonoBehaviour
             NavMeshAgent navAgent = obj.GetComponent<NavMeshAgent>();
             if (navAgent != null)
             {
-                navAgent.stoppingDistance = unit.data != null ? unit.data.stoppingDistance : stoppingDistance;
-                navAgent.enabled = true;
+                // Önce her ihtimale karşı ajan kapalı olsun
+                navAgent.enabled = false;
 
+                navAgent.stoppingDistance = unit.data != null ? unit.data.stoppingDistance : stoppingDistance;
+
+                // Karakterin altındaki en yakın NavMesh noktasını bul
                 UnityEngine.AI.NavMeshHit hit;
                 if (UnityEngine.AI.NavMesh.SamplePosition(obj.transform.position, out hit, 2.0f, UnityEngine.AI.NavMesh.AllAreas))
                 {
+                    // Objenin pozisyonunu tam o güvenli noktaya oturt
+                    obj.transform.position = hit.position;
                     navAgent.Warp(hit.position);
                 }
+
+                // Ayakları sağlam yere bastıktan sonra Agent'ı uyandır!
+                navAgent.enabled = true;
             }
 
             AnimationManager animMgr = obj.GetComponent<AnimationManager>();
@@ -163,10 +193,6 @@ public class SpawnManager : MonoBehaviour
             Debug.LogError($"HATA: {character.name} içinde Animator bulunamadı! " +
                            $"Lütfen prefab'a Animator component'i ekleyin.");
         }
-        else
-        {
-            Debug.Log($"✓ {character.name} → Animator bulundu");
-        }
     }
 
     // Yeni yardımcı: GameObject ve tüm çocuklarının layer'ını ayarlar
@@ -176,6 +202,17 @@ public class SpawnManager : MonoBehaviour
         foreach (Transform child in root.transform)
         {
             SetLayerRecursively(child.gameObject, layer);
+        }
+    }
+
+    // Yeni yardımcı: GameObject'in tüm üst (parent) zincirini ayarlar
+    private void SetLayerOnParents(GameObject obj, int layer)
+    {
+        Transform t = obj.transform.parent;
+        while (t != null)
+        {
+            t.gameObject.layer = layer;
+            t = t.parent;
         }
     }
 

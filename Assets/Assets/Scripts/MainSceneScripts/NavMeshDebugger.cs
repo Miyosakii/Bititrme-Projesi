@@ -5,7 +5,7 @@ public class NavMeshDebugger : MonoBehaviour
 {
     void Start()
     {
-        var agents = FindObjectsOfType<NavMeshAgent>();
+        var agents = FindObjectsByType<NavMeshAgent>(FindObjectsSortMode.None);
         foreach (var agent in agents)
         {
             if (!agent.isOnNavMesh)

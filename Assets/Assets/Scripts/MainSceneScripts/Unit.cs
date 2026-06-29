@@ -75,39 +75,9 @@ public class Unit : MonoBehaviour
             navAgent.updateRotation = false;
         }
 
-        // Layer ataması: root objede collider yoksa collider içeren alt objenin layer'ına ata.
-        string teamLayerName = $"Team{teamId}";
-        int teamLayer = LayerMask.NameToLayer(teamLayerName);
-        if (teamLayer == -1)
-        {
-            Debug.LogWarning($"Layer '{teamLayerName}' bulunamadı! Lütfen Project Settings -> Tags and Layers içinde '{teamLayerName}' layer'ını ekleyin.");
-        }
-        else
-        {
-            // Root'ta 3D var mı kontrol et
-            Collider root3D = GetComponent<Collider>();
-
-            if (root3D != null)
-            {
-                // Root objesinin layer'ını ayarla
-                gameObject.layer = teamLayer;
-            }
-            else
-            {
-                // Root'ta collider yok: alt objelerde collider arıyoruz (aktif/aktif olmayan dahil)
-                Collider child3D = GetComponentInChildren<Collider>(true);
-
-                if (child3D != null)
-                {
-                    child3D.gameObject.layer = teamLayer;
-                }
-                else
-                {
-                    // Hiç collider bulunamadıysa fallback olarak root'un layer'ını ayarla
-                    gameObject.layer = teamLayer;
-                }
-            }
-        }
+        // Layer ataması artık SpawnManager tarafından yönetiliyor.
+        // Eğer Unit tek başına sahneye ekleniyorsa ve layer gereksinimi varsa,
+        // SpawnManager.Spawn() kullanılması önerilir.
 
         CombatSystem.RegisterUnit(this);
     }
@@ -333,6 +303,7 @@ public class Unit : MonoBehaviour
     }
     public void OnAttackAnimationEvent()
     {
+        // Asıl saldırı kodu
         if (currentTarget != null && currentTarget.IsAlive() && attackBehavior != null)
         {
             // Okçuysa ok fırlatır, kılıçlıysa kılıç vurur. Unit bununla ilgilenmez.

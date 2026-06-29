@@ -25,9 +25,16 @@ public class CharacterData : ScriptableObject
     [Header("Animasyon")]
     public float aimRotationOffset = 0f;
 
+    [Header("Birim Tipi")]
+    public bool isFlying = false; // Ejderhalar için bunu Unity'den TRUE yapacağız
+
     [Header("Menzilli Birim Ayarları")]
     public bool isRanged = false;            // Karakter okçu mu?
     public float retreatDistance = 3f;       // Düşman bu mesafeden yakına gelirse geri kaçar
     public float retreatDistanceMove = 4f;   // Bir seferde ne kadar geriye doğru adım atacağı
+
+    [Header("Hedeflenme (Nişan Noktası)")]
+    [Tooltip("Düşman okçuları bu karaktere ateş ederken yerden ne kadar yukarıya nişan almalı? (İnsanlar için 1.2, Ejderhalar için örn: 8)")]
+    public float aimHeightOffset = 0.7f;
 
 }

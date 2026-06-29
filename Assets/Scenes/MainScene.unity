@@ -2262,7 +2262,7 @@ Transform:
   m_GameObject: {fileID: 540080478}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1239.1, y: 29.49, z: 450.1}
+  m_LocalPosition: {x: 1239.1, y: 31.13, z: 484.69}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -7030,7 +7030,7 @@ Transform:
   m_GameObject: {fileID: 2077220204}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1242.1, y: 21.9, z: 331.48}
+  m_LocalPosition: {x: 1242.1, y: 21.9, z: 391.6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -7284,6 +7284,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -3802613023764283866, guid: c1f1e6fb48052b345a95c71b92343518, type: 3}
+      propertyPath: m_CullingMode
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3725000545471801850, guid: c1f1e6fb48052b345a95c71b92343518, type: 3}
       propertyPath: m_Height
       value: 2.13
@@ -7409,6 +7413,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8389683913155606944, guid: edfd95f562402d247b494f28d5a0f62b, type: 3}
+      propertyPath: m_CullingMode
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -7466,21 +7474,9 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3311701916334505903, guid: e0a7dc3ed0ad7cb4188e1488fd2e9989, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 1.34
-      objectReference: {fileID: 0}
-    - target: {fileID: 3311701916334505903, guid: e0a7dc3ed0ad7cb4188e1488fd2e9989, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0.676
-      objectReference: {fileID: 0}
     - target: {fileID: 3405974550639488242, guid: e0a7dc3ed0ad7cb4188e1488fd2e9989, type: 3}
-      propertyPath: ShapeModule.m_Rotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8820693357462449618, guid: e0a7dc3ed0ad7cb4188e1488fd2e9989, type: 3}
-      propertyPath: arcAngle
-      value: 30
+      propertyPath: ShapeModule.angle
+      value: 4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

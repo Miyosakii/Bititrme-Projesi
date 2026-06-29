@@ -18,4 +18,11 @@ public class AnimationEventProxy : MonoBehaviour
             parentUnit.OnAttackAnimationEvent();
         }
     }
+    public void OnAttackAnimationEvent()
+    {
+        if (parentUnit != null)
+        {
+            parentUnit.OnAttackAnimationEvent();
+        }
+    }
 }

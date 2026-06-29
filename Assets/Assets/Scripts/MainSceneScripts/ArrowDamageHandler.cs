@@ -8,9 +8,15 @@ public class ArrowDamageHandler : MonoBehaviour
     // Send Collision Messages aktif olduðunda, ok bir þeye çarparsa burasý çalýþýr
     void OnParticleCollision(GameObject other)
     {
-        // Okun çarptýðý objede Unit scripti var mý diye bakýyoruz
+        // 1. Önce okun çarptýðý objede Unit var mý diye bak
         Unit hitUnit = other.GetComponent<Unit>();
-        
+
+        // 2. YENÝ: Yoksa, üst objelerine (Parent) doðru týrmanarak Unit ara!
+        if (hitUnit == null)
+        {
+            hitUnit = other.GetComponentInParent<Unit>();
+        }
+
         if (hitUnit != null && hitUnit.IsAlive())
         {
             // Kendi takým arkadaþýný vurmasýný engelliyoruz (Friendly Fire)
